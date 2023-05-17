@@ -11,7 +11,7 @@ import (
 )
 
 type SheetContext struct {
-	Spreadsheet       *spreadsheet.Spreadsheet
+	Spreadsheet   *spreadsheet.Spreadsheet
 	IsInitialized bool
 
 	PlanActionArgs        SheetArgs
@@ -46,13 +46,13 @@ type PlanActionDetails struct {
 	WorkPeriodicity      uint          `json:"PAD_work_periodicity"`
 	PlannedDurationWork  time.Duration `json:"PAD_planned_duration_work"`
 	TgUsernamesPossibles []string      `json:"PAD_tg_usernames_possibles"`
-	rowNumber         	 int           //local field
+	rowNumber            int           //local field
 }
 
 type PlanActionUsers struct {
-	TgUserName  string `json:"PAU_tg_user_name"`
-	Name        string `json:"PAU_name"`
-	rowNumber 	int    //local fields
+	TgUserName string `json:"PAU_tg_user_name"`
+	Name       string `json:"PAU_name"`
+	rowNumber  int    //local fields
 }
 
 type SheetArgs struct {
@@ -75,7 +75,7 @@ type ISheetContext interface {
 	SyncSheets() (*SheetContext, error)
 	GetDescriptionsSheets() string
 
-	RegeneratePlanActionDetails(int days) 
+	RegeneratePlanActionDetails(days int)
 }
 
 // ready
@@ -96,9 +96,9 @@ func (ctx *SheetContext) SyncDatas(syncSheets bool) (*SheetContext, error) {
 	for i := uint(0); i < ctx.PlanActionUsersArgs.CountItem; i++ {
 		currentRow := firstRow + i
 		ctx.AvaliableUsers[i] = PlanActionUsers{
-			TgUserName:  currentSheet.Rows[currentRow][firstColumn].Value,
-			Name:        currentSheet.Rows[currentRow][firstColumn+1].Value,
-			rowNumber: int(currentRow),
+			TgUserName: currentSheet.Rows[currentRow][firstColumn].Value,
+			Name:       currentSheet.Rows[currentRow][firstColumn+1].Value,
+			rowNumber:  int(currentRow),
 		}
 	}
 
@@ -117,17 +117,17 @@ func (ctx *SheetContext) SyncDatas(syncSheets bool) (*SheetContext, error) {
 		if err != nil {
 			return nil, err
 		}
-		avaliableUsers:=strings.Split(currentSheet.Rows[currentRow][firstColumn+4].Value, ";")
-		if(utils.Contains(avaliableUsers, "")){
-			avaliableUsers=nil;
+		avaliableUsers := strings.Split(currentSheet.Rows[currentRow][firstColumn+4].Value, ";")
+		if utils.Contains(avaliableUsers, "") {
+			avaliableUsers = nil
 		}
 		ctx.AvaliableWorks[i] = PlanActionDetails{
-			WorkId:              workId,
-			DescriptionWork:     currentSheet.Rows[currentRow][firstColumn+1].Value,
-			WorkPeriodicity:     workPeriodicity,
-			PlannedDurationWork: *utils.StringToDuration(currentSheet.Rows[currentRow][firstColumn+3].Value),
+			WorkId:               workId,
+			DescriptionWork:      currentSheet.Rows[currentRow][firstColumn+1].Value,
+			WorkPeriodicity:      workPeriodicity,
+			PlannedDurationWork:  *utils.StringToDuration(currentSheet.Rows[currentRow][firstColumn+3].Value),
 			TgUsernamesPossibles: avaliableUsers,
-			rowNumber:         int(currentRow),
+			rowNumber:            int(currentRow),
 		}
 	}
 
@@ -157,7 +157,7 @@ func (ctx *SheetContext) SyncDatas(syncSheets bool) (*SheetContext, error) {
 			StartWork:      startWork,
 			DurationWork:   *utils.StringToDuration(currentSheet.Rows[currentRow][firstColumn+4].Value),
 			CompletedWork:  completedWork,
-			rowNumber:    int(currentRow),
+			rowNumber:      int(currentRow),
 		}
 	}
 
