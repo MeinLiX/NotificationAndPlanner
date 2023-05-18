@@ -2,10 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"os"
-
-	"golang.org/x/net/context"
-	"golang.org/x/oauth2/google"
 	"gopkg.in/Iwark/spreadsheet.v2"
 	google_sheets "meinlix.inc/NotificationAndPlanner.v1/integration/google-sheets"
 	utils "meinlix.inc/NotificationAndPlanner.v1/utils"
@@ -13,37 +9,32 @@ import (
 
 // main
 func main() {
-	/*
-		bot, err := tgbotapi.NewBotAPI("6247398053:AAFxrmydgxG7kVxooS0BDOSoHpIzTOlVcBA")
-		if err != nil {
+	
+		// bot, err := tgbotapi.NewBotAPI("6247398053:AAFxrmydgxG7kVxooS0BDOSoHpIzTOlVcBA")
+		// if err != nil {
 
-		}
+		// }
 
-		bot.Debug = true
+		// bot.Debug = true
 
-		u := tgbotapi.NewUpdate(0)
-		u.Timeout = 60
+		// u := tgbotapi.NewUpdate(0)
+		// u.Timeout = 60
 
-		updates := bot.GetUpdatesChan(u)
+		// updates := bot.GetUpdatesChan(u)
 
-		for update := range updates {
-			if update.Message != nil {
-				msg := tgbotapi.NewMessage(update.Message.Chat.ID, update.Message.Text)
-				msg.ReplyToMessageID = update.Message.MessageID
+		// for update := range updates {
+		// 	if update.Message != nil {
+		// 		msg := tgbotapi.NewMessage(update.Message.Chat.ID, update.Message.Text)
+		// 		msg.ReplyToMessageID = update.Message.MessageID
 
-				bot.Send(msg)
-			}
-		}
-	*/
-
-	configBytes, err := os.ReadFile("noiticationandplanner-4481fcf454ae.json")
+		// 		bot.Send(msg)
+		// 	}
+		// }
+	
+	config := utils.GetConfig()
+	service, err := spreadsheet.NewService()
 	utils.PanicIfError(err)
-	conf, err := google.JWTConfigFromJSON(configBytes, spreadsheet.Scope)
-	utils.PanicIfError(err)
-	client := conf.Client(context.TODO())
-
-	service := spreadsheet.NewServiceWithClient(client)
-	spreadsheet, err := service.FetchSpreadsheet("1p78c-6nlL2HKfKpJpuLr_kYEumI_ZooracEd_c7e7hQ")
+	spreadsheet, err := service.FetchSpreadsheet(config.SheetId)
 	//https://docs.google.com/spreadsheets/d/1p78c-6nlL2HKfKpJpuLr_kYEumI_ZooracEd_c7e7hQ
 	utils.PanicIfError(err)
 
