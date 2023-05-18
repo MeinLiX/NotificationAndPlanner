@@ -53,17 +53,17 @@ func main() {
 		},
 	}
 
-	success, err := sheetsContext.SyncDatas(true)
+	success, err := sheetsContext.SyncData(true)
 	utils.PanicIfError(err)
 	if success == nil {
 		panic("sync sheets failed")
 	}
 	//TEST
-	f1, err := json.Marshal(success.AvaliableUsers)
+	f1, err := json.Marshal(success.AvailableUsers)
 	utils.PanicIfError(err)
-	f2, err := json.Marshal(success.AvaliableWorks)
+	f2, err := json.Marshal(success.AvailableWorks)
 	utils.PanicIfError(err)
-	f3, err := json.Marshal(success.AvaliableActions)
+	f3, err := json.Marshal(success.AvailableActions)
 	utils.PanicIfError(err)
 	println(string(f1))
 	println(string(f2))

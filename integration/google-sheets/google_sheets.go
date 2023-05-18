@@ -18,9 +18,9 @@ type SheetContext struct {
 	PlanActionDetailsArgs SheetArgs
 	PlanActionUsersArgs   SheetArgs
 
-	AvaliableActions []PlanAction
-	AvaliableWorks   []PlanActionDetails
-	AvaliableUsers   []PlanActionUsers
+	AvailableActions []PlanAction
+	AvailableWorks   []PlanActionDetails
+	AvailableUsers   []PlanActionUsers
 
 	PlanActionSheet        *spreadsheet.Sheet
 	PlanActionDetailsSheet *spreadsheet.Sheet
@@ -71,7 +71,7 @@ type ISheetContext interface {
 	InsertOrUpdatePlanAction(planAction PlanAction) (bool, error)
 	RemovePlanAction(guid string) (bool, error)
 
-	SyncDatas(syncCheets bool) (*SheetContext, error)
+	SyncData(syncSheets bool) (*SheetContext, error)
 	SyncSheets() (*SheetContext, error)
 	GetDescriptionsSheets() string
 
@@ -79,12 +79,12 @@ type ISheetContext interface {
 }
 
 // ready
-func (ctx *SheetContext) SyncDatas(syncSheets bool) (*SheetContext, error) {
+func (ctx *SheetContext) SyncData(syncSheets bool) (*SheetContext, error) {
 	if syncSheets || !ctx.IsInitialized {
-		if ctxnew, err := ctx.SyncSheets(); err != nil {
+		if ctxNew, err := ctx.SyncSheets(); err != nil {
 			return nil, err
 		} else {
-			ctx = ctxnew
+			ctx = ctxNew
 		}
 	}
 
@@ -92,10 +92,10 @@ func (ctx *SheetContext) SyncDatas(syncSheets bool) (*SheetContext, error) {
 	firstRow := ctx.PlanActionUsersArgs.RowStart + 1
 	firstColumn := ctx.PlanActionUsersArgs.ColumnStart
 	currentSheet := ctx.PlanActionUsersSheet
-	ctx.AvaliableUsers = make([]PlanActionUsers, ctx.PlanActionUsersArgs.CountItem)
+	ctx.AvailableUsers = make([]PlanActionUsers, ctx.PlanActionUsersArgs.CountItem)
 	for i := uint(0); i < ctx.PlanActionUsersArgs.CountItem; i++ {
 		currentRow := firstRow + i
-		ctx.AvaliableUsers[i] = PlanActionUsers{
+		ctx.AvailableUsers[i] = PlanActionUsers{
 			TgUserName: currentSheet.Rows[currentRow][firstColumn].Value,
 			Name:       currentSheet.Rows[currentRow][firstColumn+1].Value,
 			rowNumber:  int(currentRow),
@@ -106,7 +106,7 @@ func (ctx *SheetContext) SyncDatas(syncSheets bool) (*SheetContext, error) {
 	firstRow = ctx.PlanActionDetailsArgs.RowStart + 1
 	firstColumn = ctx.PlanActionDetailsArgs.ColumnStart
 	currentSheet = ctx.PlanActionDetailsSheet
-	ctx.AvaliableWorks = make([]PlanActionDetails, ctx.PlanActionDetailsArgs.CountItem)
+	ctx.AvailableWorks = make([]PlanActionDetails, ctx.PlanActionDetailsArgs.CountItem)
 	for i := uint(0); i < ctx.PlanActionDetailsArgs.CountItem; i++ {
 		currentRow := firstRow + i
 		workId, err := utils.StringToUint(currentSheet.Rows[currentRow][firstColumn].Value)
@@ -117,16 +117,16 @@ func (ctx *SheetContext) SyncDatas(syncSheets bool) (*SheetContext, error) {
 		if err != nil {
 			return nil, err
 		}
-		avaliableUsers := strings.Split(currentSheet.Rows[currentRow][firstColumn+4].Value, ";")
-		if utils.Contains(avaliableUsers, "") {
-			avaliableUsers = nil
+		availableUsers := strings.Split(currentSheet.Rows[currentRow][firstColumn+4].Value, ";")
+		if utils.Contains(availableUsers, "") {
+			availableUsers = nil
 		}
-		ctx.AvaliableWorks[i] = PlanActionDetails{
+		ctx.AvailableWorks[i] = PlanActionDetails{
 			WorkId:               workId,
 			DescriptionWork:      currentSheet.Rows[currentRow][firstColumn+1].Value,
 			WorkPeriodicity:      workPeriodicity,
 			PlannedDurationWork:  *utils.StringToDuration(currentSheet.Rows[currentRow][firstColumn+3].Value),
-			TgUsernamesPossibles: avaliableUsers,
+			TgUsernamesPossibles: availableUsers,
 			rowNumber:            int(currentRow),
 		}
 	}
@@ -135,7 +135,7 @@ func (ctx *SheetContext) SyncDatas(syncSheets bool) (*SheetContext, error) {
 	firstRow = ctx.PlanActionArgs.RowStart + 1
 	firstColumn = ctx.PlanActionArgs.ColumnStart
 	currentSheet = ctx.PlanActionSheet
-	ctx.AvaliableActions = make([]PlanAction, ctx.PlanActionArgs.CountItem)
+	ctx.AvailableActions = make([]PlanAction, ctx.PlanActionArgs.CountItem)
 	for i := uint(0); i < ctx.PlanActionArgs.CountItem; i++ {
 		currentRow := firstRow + i
 		selectedWorkId, err := utils.StringToUint(currentSheet.Rows[currentRow][firstColumn+2].Value)
@@ -150,7 +150,7 @@ func (ctx *SheetContext) SyncDatas(syncSheets bool) (*SheetContext, error) {
 		if err != nil {
 			return nil, err
 		}
-		ctx.AvaliableActions[i] = PlanAction{
+		ctx.AvailableActions[i] = PlanAction{
 			Uuid:           currentSheet.Rows[currentRow][firstColumn].Value,
 			TgUserName:     currentSheet.Rows[currentRow][firstColumn+1].Value,
 			SelectedWorkId: selectedWorkId,
