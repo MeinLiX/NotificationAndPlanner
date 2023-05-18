@@ -75,7 +75,7 @@ type ISheetContext interface {
 	SyncSheets() (*SheetContext, error)
 	GetDescriptionsSheets() string
 
-	RegeneratePlanActionDetails(int days) 
+	RegeneratePlanActionDetails(days int) 
 }
 
 // ready
